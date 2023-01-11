@@ -1,5 +1,16 @@
 version: "3.9"
 services:
+  servicebus:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - "15672:15672"
+    volumes:
+      - rabbitmq_volume:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+
   mongodb:
     image: mongo
     restart: always
@@ -25,4 +36,5 @@ services:
       - mongodb
 volumes:
   mongodb_volume:
+  rabbitmq_volume:
     
