@@ -30,10 +30,13 @@ services:
       MONGODB_DATABASE: profiledb
       MONGODB_USER: ${MONGO_ROOT_USERNAME}
       MONGODB_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      AMQP_URL: amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@servicebus
     volumes:
       - ${PROFILE_CODE_DIR}:/app
     depends_on:
       - mongodb
+      - servicebus
+
 volumes:
   mongodb_volume:
   rabbitmq_volume:

@@ -136,3 +136,5 @@ MONGODB_DATABASE = os.environ.get('MONGODB_DATABASE')
 MONGODB_USER = os.environ.get('MONGODB_USER')
 MONGODB_PASSWORD =  os.environ.get('MONGODB_PASSWORD')
 MONGODB_PORT =  os.environ.get('MONGODB_PORT', '27017')
+
+AMQP_URL = os.environ.get('AMQP_URL', 'amqp://guest:guest@localhost')

@@ -1,9 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from db_utils import get_db_handle, format_json
+from db_utils import get_db_handle, format_json, format_str_json
 from profileapp.api.serializer import ProfileSerializer
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_404_NOT_FOUND
 from bson.objectid import ObjectId
+from sbus_utils import send_message
 
 class UserViewset(viewsets.ViewSet):
     def create(self, request):
@@ -17,6 +18,7 @@ class UserViewset(viewsets.ViewSet):
         db_handle, client = get_db_handle()
         db_handle.profiles.insert_one(data)
 
+        send_message(format_str_json(data))
         return Response(format_json(data), status=HTTP_200_OK)
     
     def list(self, request):

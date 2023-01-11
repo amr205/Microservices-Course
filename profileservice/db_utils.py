@@ -25,3 +25,6 @@ class MongoJSONEncoder(json.JSONEncoder):
 
 def format_json(results):
     return json.loads(MongoJSONEncoder().encode(results))
+
+def format_str_json(results):
+    return MongoJSONEncoder().encode(results)
