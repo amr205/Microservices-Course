@@ -21,6 +21,8 @@ services:
       MONGODB_PASSWORD: ${MONGO_ROOT_PASSWORD}
     volumes:
       - ${PROFILE_CODE_DIR}:/app
+    depends_on:
+      - mongodb
 volumes:
   mongodb_volume:
     
