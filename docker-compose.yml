@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    volumes:
+      - mongodb_volume:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+
+  profileservice:
+    build: ./profileservice
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      MONGODB_HOST: mongodb
+      MONGODB_DATABASE: profiledb
+      MONGODB_USER: ${MONGO_ROOT_USERNAME}
+      MONGODB_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - ${PROFILE_CODE_DIR}:/app
+volumes:
+  mongodb_volume:
+    
