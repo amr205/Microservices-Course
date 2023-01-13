@@ -32,12 +32,39 @@ services:
       MONGODB_PASSWORD: ${MONGO_ROOT_PASSWORD}
       AMQP_URL: amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@servicebus
     volumes:
-      - ${PROFILE_CODE_DIR}:/app
+      - ${PROFILE_CODE_DIR}/profileservice:/app
     depends_on:
       - mongodb
+      - servicebus
+
+  songsdb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: always
+    volumes:
+      - sqldb_volume:/var/opt/mssql
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_PID: Express
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+
+  songs_service:
+    build: ./songs_service
+    restart: always
+    ports:
+      - "9000:8000"
+    environment:
+      DATABASE_USER: sa
+      DATABASE_PASSWORD: ${MSSQL_SA_PASSWORD}
+      DATABASE_HOST: songsdb
+      AMQP_URL: amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@servicebus
+    volumes:
+      - ${PROFILE_CODE_DIR}/songs_service:/app
+    depends_on:
+      - songsdb
       - servicebus
 
 volumes:
   mongodb_volume:
   rabbitmq_volume:
+  sqldb_volume:
     
