@@ -3,7 +3,8 @@ from songsapp.models import Song, Artist, Genre
 from songsapp.api.serializers import SongSerializer, ArtistSerializer, GenreSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+from sbus_utils import send_message
+import json
 
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
@@ -11,10 +12,24 @@ class SongViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['patch'])
     def like(self, request, pk=None):
+        song = Song.objects.get(id=pk)
+        song_serializer = SongSerializer(song)
+        data = {
+            'action': 'liked',
+            'song': song_serializer.data
+        }
+        send_message(json.dumps(data))
         return Response(f'Liked Song: {pk}')
 
     @action(detail=True, methods=['patch'])
     def unlike(self, request, pk=None):
+        song = Song.objects.get(id=pk)
+        song_serializer = SongSerializer(song)
+        data = {
+            'action': 'unliked',
+            'song': song_serializer.data
+        }
+        send_message(json.dumps(data))
         return Response(f'Unliked Song: {pk}')
 
 
