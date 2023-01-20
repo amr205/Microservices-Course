@@ -19,7 +19,7 @@ class SongViewSet(viewsets.ModelViewSet):
             'song': song_serializer.data
         }
         send_message(json.dumps(data))
-        return Response(f'Liked Song: {pk}')
+        return Response(data)
 
     @action(detail=True, methods=['patch'])
     def unlike(self, request, pk=None):
