@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from sbus_utils import send_message
 import json
 
+
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer

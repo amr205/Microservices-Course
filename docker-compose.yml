@@ -86,9 +86,24 @@ services:
     volumes:
       - ${PROFILE_CODE_DIR}/recommendations_service:/app
     depends_on:
-      - songsdb
+      - recommendationsdb
       - servicebus
   
+  recommendations_worker2:
+    build: ./recommendations_service
+    restart: always
+    environment:
+      DATABASE_USER: sa
+      DATABASE_PASSWORD: ${MSSQL_SA_PASSWORD}
+      DATABASE_HOST: recommendationsdb
+      AMQP_URL: amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@servicebus
+    volumes:
+      - ${PROFILE_CODE_DIR}/recommendations_service:/app
+    depends_on:
+      - recommendationsdb
+      - servicebus
+    command: python3 manage.py listen_profile_messages
+
   recommendations_worker1:
     build: ./recommendations_service
     restart: always
@@ -100,10 +115,9 @@ services:
     volumes:
       - ${PROFILE_CODE_DIR}/recommendations_service:/app
     depends_on:
-      - songsdb
+      - recommendationsdb
       - servicebus
     command: python3 manage.py listen_songs_messages
-
 volumes:
   mongodb_volume:
   rabbitmq_volume:

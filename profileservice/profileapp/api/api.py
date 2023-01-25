@@ -5,6 +5,7 @@ from profileapp.api.serializer import ProfileSerializer
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_404_NOT_FOUND
 from bson.objectid import ObjectId
 from sbus_utils import send_message
+import json
 
 class UserViewset(viewsets.ViewSet):
     def create(self, request):
@@ -18,8 +19,12 @@ class UserViewset(viewsets.ViewSet):
         db_handle, client = get_db_handle()
         db_handle.profiles.insert_one(data)
 
-        send_message(format_str_json(data))
-        return Response(format_json(data), status=HTTP_200_OK)
+        message_data = {
+            'action': 'create',
+            'profile': format_json(data)
+        }
+        send_message(json.dumps(message_data))
+        return Response(message_data, status=HTTP_200_OK)
     
     def list(self, request):
         db_handle, client = get_db_handle()
@@ -41,13 +46,21 @@ class UserViewset(viewsets.ViewSet):
 
         return Response('')
     
-    def update(self, request):
+    def update(self, request, pk=None):
+        data = request.data
+        serializer = ProfileSerializer(data=data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        
+        data = serializer.validated_data
         db_handle, client = get_db_handle()
+        db_handle.profiles.update_one({'_id': ObjectId(pk)}, {"$set": data})
+        data['_id'] = str(pk)
 
-        db_handle.boxes.insert_one({
-            'name': "shoes box",
-            'number': 1
-        })
-
-        boxes = list(db_handle.boxes.find())
-        return Response(format_json(boxes))
+        message_data = {
+            'action': 'update',
+            'profile': format_json(data)
+        }
+        send_message(json.dumps(message_data))
+        return Response(format_json(data), status=HTTP_200_OK)

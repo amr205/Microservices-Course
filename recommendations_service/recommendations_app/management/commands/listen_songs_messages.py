@@ -21,7 +21,7 @@ class Command(BaseCommand):
     help = 'Listen to messages in the songservice queue'
 
     def handle(self, *args, **options):
-        time.sleep(4)
+        time.sleep(8)
         print("Connecting to service bus")
         url = settings.AMQP_URL
         params = pika.URLParameters(url)
