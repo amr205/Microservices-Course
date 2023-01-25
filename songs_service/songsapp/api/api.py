@@ -5,6 +5,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from sbus_utils import send_message
 import json
+from songs_service.viewsets import ChildModelViewset
+
+
+class SongGenresViewSet(ChildModelViewset):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    parent_model = Song
+    child_model = Genre
+    parent_to_child_rel = "genres"
 
 
 class SongViewSet(viewsets.ModelViewSet):

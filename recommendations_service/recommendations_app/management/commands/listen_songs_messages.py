@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 import pika, time, json
 from django.conf import settings
-from recommendations_app.models import Song
+from recommendations_app.models import Song, Genre
 
 def handle_songs_service_messages(ch, method, properties, body):
     json_data = json.loads(body)
@@ -14,7 +14,17 @@ def handle_songs_service_messages(ch, method, properties, body):
         song.number_of_likes = song.number_of_likes+1
     else:
         song.number_of_likes = song.number_of_likes-1
+    
+    song.genres.all().delete()
+
+    genres = json_data['song']['genres']
+    for genre_data in genres:
+        genre, _ = Genre.objects.get_or_create(
+            name=genre_data['name'],
+        )
+        song.genres.add(genre)
     song.save()
+    return
 
 
 class Command(BaseCommand):

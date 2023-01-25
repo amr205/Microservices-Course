@@ -16,6 +16,7 @@ def handle_profile_service_messages(ch, method, properties, body):
             name=genre_name,
         )
         user.genres.add(genre)
+    user.save()
     return
 
 
