@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-tezd5r(s_zab*h@$h0%5*%55r0!&%ye7)69a-x$v!zslf!vzr#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['profileservice', '*']
 
 
 # Application definition

@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from db_utils import get_db_handle, format_json, format_str_json
 from profileapp.api.serializer import ProfileSerializer
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_404_NOT_FOUND
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_201_CREATED
 from bson.objectid import ObjectId
 from sbus_utils import send_message
 import json
@@ -24,7 +24,7 @@ class UserViewset(viewsets.ViewSet):
             'profile': format_json(data)
         }
         send_message(json.dumps(message_data))
-        return Response(message_data, status=HTTP_200_OK)
+        return Response(format_json(data), status=HTTP_201_CREATED)
     
     def list(self, request):
         db_handle, client = get_db_handle()
