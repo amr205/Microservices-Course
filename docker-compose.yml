@@ -118,9 +118,32 @@ services:
       - recommendationsdb
       - servicebus
     command: python3 manage.py listen_songs_messages
+  
+  authdb:
+    image: mongo
+    restart: always
+    volumes:
+      - authdb_volume:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGOAUTH_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGOAUTH_ROOT_PASSWORD}
+  
+  api_gateway:
+    build: ./api_gateway
+    restart: always
+    volumes:
+      - ${PROFILE_CODE_DIR}/api_gateway:/app
+    ports:
+      - "9090:8080"
+    environment:
+      API_PORT: 8080
+      MONGO_URI: mongodb://${MONGOAUTH_ROOT_USERNAME}:${MONGOAUTH_ROOT_PASSWORD}@authdb
+      TOKEN_KEY: ${TOKEN_KEY}
+    depends_on:
+      - authdb
 volumes:
   mongodb_volume:
   rabbitmq_volume:
   sqldb_volume:
   recommendationdb_volume:
-    
+  authdb_volume:
