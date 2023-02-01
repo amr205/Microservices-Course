@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-3e&)i9v96*523n17h)!$je@^25euu3!s#9n%e2a!_4ou8=8v6^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['songs_service', '*']
 
 
 # Application definition
@@ -141,3 +141,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AMQP_URL = os.environ.get('AMQP_URL', 'amqp://guest:guest@localhost')
+TOKEN_KEY = os.environ.get('TOKEN_KEY', '')

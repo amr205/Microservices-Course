@@ -10,6 +10,7 @@ const httpProxy = require("express-http-proxy")
 
 const app = express();
 app.use(express.json({limit: "50mb"}))
+const songServiceProxy = httpProxy("http://songs_service:8000")
 
 
 app.post("/register", async (req, res) => {
@@ -84,6 +85,9 @@ app.post("/login", async (req, res) => {
     }
   });
 
+app.patch("/songs/:song_id/like/", auth, (req, res, next)=>{
+    songServiceProxy(req, res, next)
+})
 
 app.use("*", (req, res)=>{
     res.status(404).send("NOT FOUND")

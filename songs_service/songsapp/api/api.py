@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from sbus_utils import send_message
 import json
 from songs_service.viewsets import ChildModelViewset
-
+import jwt
+from django.conf import settings
 
 class SongGenresViewSet(ChildModelViewset):
     queryset = Genre.objects.all()
@@ -22,11 +23,14 @@ class SongViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['patch'])
     def like(self, request, pk=None):
+        user = jwt.decode(request.headers['x-access-token'], settings.TOKEN_KEY, algorithms=['HS256'])
+
         song = Song.objects.get(id=pk)
         song_serializer = SongSerializer(song)
         data = {
             'action': 'liked',
-            'song': song_serializer.data
+            'song': song_serializer.data,
+            'user': user
         }
         send_message(json.dumps(data))
         return Response(data)
